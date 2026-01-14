@@ -1,0 +1,8 @@
+"""
+Stub values for CI/testing - copy to src/values.py for local development.
+Replace these placeholders with real tokens before you commit.
+"""
+
+OPENAI_API_KEY = "openai-token-for-ci"
+SERPAPI_API_KEY = "serpapi-token-for-ci"
+BRAVE_API_KEY = "brave-token-for-ci"

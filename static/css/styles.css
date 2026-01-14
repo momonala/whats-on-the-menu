@@ -1,0 +1,362 @@
+/**
+ * What's On the Menu? Styles
+ * Modern, accessible, and responsive design with dark mode support
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================================================
+   CSS Variables
+   ============================================================================ */
+
+:root {
+    /* Colors - Light Mode */
+    --apple-blue: #007AFF;
+    --apple-blue-hover: #0051D5;
+    --apple-gray-1: #F5F5F7;
+    --apple-gray-2: #E5E5EA;
+    --apple-gray-3: #D1D1D6;
+    --apple-gray-4: #8E8E93;
+    --apple-gray-5: #636366;
+    --apple-gray-6: #48484A;
+    --apple-gray-7: #1C1C1E;
+    
+    /* Shadows */
+    --apple-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    --apple-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+    
+    /* Background & Text */
+    --bg-primary: var(--apple-gray-1);
+    --bg-secondary: #FFFFFF;
+    --text-primary: var(--apple-gray-7);
+    --text-secondary: var(--apple-gray-5);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode - Only applied when explicitly enabled via class */
+html.dark {
+    --apple-gray-1: #1C1C1E;
+    --apple-gray-2: #2C2C2E;
+    --apple-gray-3: #3A3A3C;
+    --apple-gray-4: #48484A;
+    --apple-gray-5: #636366;
+    --apple-gray-6: #8E8E93;
+    --apple-gray-7: #F5F5F7;
+    
+    --bg-primary: var(--apple-gray-1);
+    --bg-secondary: var(--apple-gray-2);
+    --text-primary: var(--apple-gray-7);
+    --text-secondary: var(--apple-gray-5);
+    
+    --apple-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+    --apple-card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+body {
+    background: var(--bg-primary);
+    min-height: 100vh;
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ============================================================================
+   Upload Area
+   ============================================================================ */
+
+.upload-area-active {
+    background: rgba(0, 122, 255, 0.06) !important;
+    border-color: var(--apple-blue) !important;
+    transform: scale(1.01);
+}
+
+/* Tap feedback for upload area on mobile */
+#upload-area:active {
+    transform: scale(0.98);
+    background: rgba(0, 122, 255, 0.04);
+}
+
+
+/* ============================================================================
+   Dish Cards
+   ============================================================================ */
+
+.dish-card {
+    transition: all var(--transition-normal);
+    background: var(--bg-secondary);
+}
+
+.dish-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--apple-card-shadow-hover);
+}
+
+.dish-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    max-height: 4.5em;
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+.fade-in {
+    animation: fadeIn var(--transition-slow);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-green {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.timer-pulse {
+    animation: pulse-green 1.5s ease-in-out infinite;
+}
+
+/* ============================================================================
+   Buttons
+   ============================================================================ */
+
+.apple-button {
+    background: var(--apple-blue);
+    color: white;
+    transition: all var(--transition-fast);
+    border: none;
+    cursor: pointer;
+}
+
+.apple-button:hover {
+    background: var(--apple-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.apple-button:active {
+    transform: translateY(0);
+}
+
+.apple-button:focus {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Skip to main content link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--apple-blue);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* ============================================================================
+   Touch & Mobile Behavior
+   ============================================================================ */
+
+/* Improve touch responsiveness */
+@media (hover: none) and (pointer: coarse) {
+    /* Mobile touch devices */
+    body {
+        touch-action: pan-y pinch-zoom;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Improve tap targets */
+    button,
+    [role="button"],
+    a {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0, 122, 255, 0.1);
+    }
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* ============================================================================
+   Image Gallery Modal
+   ============================================================================ */
+
+#image-gallery-modal {
+    transition: opacity var(--transition-normal);
+}
+
+#image-gallery-modal:not(.hidden) {
+    animation: fadeIn var(--transition-fast);
+}
+
+#gallery-image-container {
+    touch-action: pan-y pinch-zoom;
+    cursor: grab;
+    user-select: none;
+}
+
+#gallery-image-container:active {
+    cursor: grabbing;
+}
+
+#gallery-slider {
+    will-change: transform;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(0);
+}
+
+#gallery-slider.gallery-sliding {
+    transition: none;
+}
+
+#gallery-image {
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    opacity: 1;
+}
+
+#gallery-close,
+#gallery-prev,
+#gallery-next {
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+#gallery-close:hover,
+#gallery-prev:hover,
+#gallery-next:hover {
+    transform: scale(1.1);
+}
+
+#gallery-prev,
+#gallery-next {
+    touch-action: manipulation;
+}
+
+#gallery-counter {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+    #gallery-prev,
+    #gallery-next {
+        padding: 0.5rem;
+    }
+    
+    #gallery-close {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem;
+    }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+    .settings-button,
+    .upload-area,
+    .error-message {
+        display: none;
+    }
+    
+    .dish-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
