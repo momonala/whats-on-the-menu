@@ -85,7 +85,7 @@ This two-stage approach allows users to see translation results quickly, while i
 ```mermaid
 flowchart TB
     subgraph Client
-        Browser[Browser<br/>Vanilla HTML/CSS/JS + Tailwind]
+        Browser[Browser]
     end
     subgraph Backend
         Flask[Flask Server :5011]
@@ -104,11 +104,11 @@ flowchart TB
     OpenAIService --> OpenAI
     Flask --> ForexService
     ForexService --> ForexAPI
-    Flask -->|JSON Response (no images)| Browser
+    Flask -->|JSON response, no images| Browser
     Browser -->|POST /api/fetch-images| Flask
     Flask --> ImageSearchService
     ImageSearchService --> BraveAPI
-    Flask -->|JSON Response (images)| Browser
+    Flask -->|JSON response with images| Browser
 ```
 
 ### Data Flow
