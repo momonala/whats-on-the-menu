@@ -1,6 +1,8 @@
 """Flask application for menu translation."""
 
+import json
 import logging
+from datetime import datetime
 from pathlib import Path
 
 from flask import Flask
@@ -12,6 +14,7 @@ from src.config import DEFAULT_OPENAI_MODEL
 from src.config import DEFAULT_TARGET_CURRENCY
 from src.config import FLASK_PORT
 from src.config import MAX_UPLOAD_SIZE_MB
+from src.config import TMP_DIR
 from src.image_validation import ImageValidationError
 from src.image_validation import save_uploaded_image
 from src.services.forex_service import get_exchange_rate
@@ -69,6 +72,16 @@ def translate_menu():
     image_path = None
     try:
         image_path = save_uploaded_image(file_content, filename)
+        metadata_path = TMP_DIR / "metadata.jsonl"
+        metadata_record = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "client_ip": request.remote_addr,
+            "image_path": str(image_path),
+            "original_filename": filename,
+        }
+        with metadata_path.open("a", encoding="utf-8") as f:
+            json.dump(metadata_record, f)
+            f.write("\n")
     except ImageValidationError as e:
         return jsonify({"status": "error", "message": str(e)}), 400
 
@@ -178,6 +191,8 @@ def fetch_images():
 
 def main():
     """Run the Flask application."""
+    host = "0.0.0.0"
+    logger.info(f"{host}:{FLASK_PORT}")
     app.run(host="0.0.0.0", port=FLASK_PORT, debug=False)
 
 

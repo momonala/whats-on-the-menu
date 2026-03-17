@@ -21,6 +21,10 @@ DEFAULT_OPENAI_MODEL = _tool_config["default_openai_model"]
 # Cache directory for all services
 CACHE_DIR = Path(".cache")
 
+# Local directory for temporary image storage and metadata
+TMP_DIR = Path("tmp")
+TMP_DIR.mkdir(exist_ok=True)
+
 
 def config_cli(
     all: bool = typer.Option(False, "--all", help="Show all configuration values"),
