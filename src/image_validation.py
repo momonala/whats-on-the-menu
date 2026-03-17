@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from src.config import MAX_UPLOAD_SIZE_MB
+from src.config import MAX_UPLOAD_SIZE_MB, TMP_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def save_uploaded_image(file_content: bytes, filename: str) -> Path:
     validate_image_file(file_content, filename)
 
     suffix = Path(filename).suffix or ".jpg"
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=TMP_DIR) as tmp_file:
         tmp_file.write(file_content)
         tmp_path = Path(tmp_file.name)
 

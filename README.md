@@ -1,10 +1,10 @@
 # What's On the Menu?
 
-> **Purpose**: Translate menu photos from foreign languages to English with dish explanations, pronunciations, images, and price conversions
+> **Purpose**: Translate menu photos from foreign languages to English with dish explanations, pronunciations, allergen flags, images, and price conversions
 
 ## What This Solves
 
-Translates restaurant menus from any language to English. Users upload a menu photo or take one with their camera. The app provides English translations, pronunciations, dish descriptions, representative images, and converts prices to the user's preferred currency.
+Translates restaurant menus from any language to English. Users upload a menu photo or take one with their camera. The app provides English translations, pronunciations, dish descriptions, likely allergens (peanuts, gluten, meat), representative images, and converts prices to the user's preferred currency.
 
 ## Configuration
 
@@ -73,7 +73,7 @@ Stateless web application processing menu images through a two-stage pipeline:
 2. Image validated (size, format)
 3. OpenAI Vision API extracts and translates menu items with prices
 4. Currency conversion applied if needed
-5. Translation results returned immediately (without images)
+5. Translation results returned immediately (without images); uploaded image cleaned up after processing
 
 **Stage 2: Image Fetching (Optional)**
 6. If images are enabled, frontend requests images for each dish separately
@@ -110,22 +110,6 @@ flowchart TB
     ImageSearchService --> BraveAPI
     Flask -->|JSON response with images| Browser
 ```
-
-### Data Flow
-
-**Stage 1: Translation**
-
-1. User uploads menu image or takes photo via web interface
-2. Flask route validates image (size, format)
-3. OpenAI Vision API processes image, returns structured JSON with translated dishes, prices, and currency
-4. Forex service converts prices to target currency if needed
-5. Translation results returned to frontend (without images)
-6. Uploaded image cleaned up after processing
-
-**Stage 2: Image Fetching (if enabled)**
-7. Frontend sends separate request to `/api/fetch-images` for each dish
-8. Brave Image Search fetches multiple representative images per dish (cached)
-9. Images displayed as they become available
 
 ## Project Structure
 
@@ -170,7 +154,9 @@ MenuDish
 ├── image_urls: list[str] | None  # Multiple URLs from image search
 ├── original_text: str            # Original text from menu
 ├── price: str | None             # Original price string
-└── converted_price: float | None # Price in target currency
+├── price_numeric: float | None   # Parsed numeric price
+├── converted_price: float | None # Price in target currency
+└── allergies: list[str]          # Likely allergens: "peanuts", "gluten", "meat"
 
 MenuTranslation
 ├── dishes: list[MenuDish]        # List of translated dishes
@@ -188,12 +174,14 @@ MenuTranslation
 ## API Endpoints
 
 
-| Endpoint            | Method | Description                                    |
-| ------------------- | ------ | ---------------------------------------------- |
-| `/`                 | GET    | Main page with upload interface                |
-| `/api/translate`    | POST   | Upload menu image, get translation (no images) |
-| `/api/fetch-images` | POST   | Fetch images for dishes                        |
-| `/status`           | GET    | Health check                                   |
+| Endpoint              | Method | Description                                       |
+| --------------------- | ------ | -------------------------------------------------- |
+| `/`                   | GET    | Main page with upload interface                    |
+| `/api/translate`      | POST   | Upload menu image, get translation (no images)     |
+| `/api/fetch-images`   | POST   | Fetch images for dishes                            |
+| `/api/currencies`     | GET    | List supported currencies (code + name)            |
+| `/api/exchange-rate`  | GET    | Exchange rate between two currencies (`from`, `to`)|
+| `/status`             | GET    | Health check                                       |
 
 
 ### POST /api/translate
@@ -228,7 +216,9 @@ curl -X POST http://localhost:5011/api/translate \
         "image_urls": null,
         "original_text": "Paella Valenciana",
         "price": "€18.50",
-        "converted_price": 19.98
+        "price_numeric": 18.5,
+        "converted_price": 19.98,
+        "allergies": ["gluten"]
       }
     ]
   }
@@ -290,25 +280,4 @@ uv run pytest --cov=src --cov-report=html
 - Image validation tests use in-memory file objects
 - Integration tests inject mocked services
 - All external dependencies are mocked
-
-## Deployment
-
-For deployment:
-
-1. Set up environment with Python 3.12+
-2. Install dependencies: `uv sync`
-3. Configure secrets in `src/values.py` (OPENAI_API_KEY, BRAVE_API_KEY)
-4. Run: `uv run python -m src.app`
-
-Server runs at [http://localhost:5011](http://localhost:5011)
-
-For production, consider:
-
-- Production WSGI server (gunicorn, uwsgi)
-- Environment variables for secrets instead of file-based
-- Rate limiting
-- Monitoring and logging
-- HTTPS/SSL certificates
-- Image CDN for serving cached images
-- Request timeout handling for long-running image fetches
 
